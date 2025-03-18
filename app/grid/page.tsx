@@ -9,9 +9,9 @@ const directions = [
 
 // Define multiple levels
 const levels = [
-  [1, 3, 2, -1, 3, -2, 1, 3, 2], // Level 1
-  [2, -1, 1, 3, 0, -2, 1, -3, 2], // Level 2
-  [-3, 2, 1, 3, -2, 0, -1, 3, 1], // Level 3
+  [-1, -1, -1, -1, 1, -1, -1, -1, -1], // Level 1
+  [1, 1, 1, 1, -1, 1, 1, 1, 1], // Level 2
+  [1, 3, 2, -1, 3, -2, 1, 3, 2], // Level 3
 ];
 
 export default function GridGame() {
@@ -55,7 +55,9 @@ export default function GridGame() {
   }
 
   const allZeros = grid.every((cell) => cell === 0);
-  const noMovesLeft = grid.every((cell) => cell >= 0);
+  const onlyPositives = grid.every((cell) => cell >= 0); // Check if all cells are positive
+  const onlyNegatives = grid.every((cell) => cell <= 0); // Check if all cells are negative
+  const noMovesLeft = onlyPositives || onlyNegatives; // No moves left if all are positive or all are negative
 
   if (allZeros || noMovesLeft) {
     return (
@@ -107,7 +109,18 @@ export default function GridGame() {
         color: "white",
       }}
     >
-      <h2>Level {currentLevel + 1}</h2>
+      <h2
+        style={{
+          alignItems: "center",
+          fontFamily: "Calibri, sans-serif",
+          fontSize: "32px",
+          color: "#177fbf",
+          marginBottom: "20px",
+          textShadow: "2px 2px 4px #000",
+        }}
+    >
+        Level {currentLevel + 1}
+    </h2>
       <div
         style={{
           display: "grid",
