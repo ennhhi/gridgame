@@ -7,64 +7,43 @@ const directions = [
   [-1, -1], [-1, 1], [1, -1], [1, 1]  // diagonal directions
 ];
 
-export default function GridGame() {
-  // Initialize grid with values 1, 2, 1, -1, 2, -1, 1, 2, 1
-  const [grid, setGrid] = useState([1, 3, 2, -1, 3, -2, 1, 3, 2]);
+// Initial grid values
+const initialGrid = [1, 3, 2, -1, 3, -2, 1, 3, 2];
 
-  // Handle square click
+export default function GridGame() {
+  const [grid, setGrid] = useState([...initialGrid]);
+
   function handleClick(index: number) {
     const newGrid = [...grid];
-
-    // Get the value of the clicked square
     const value = newGrid[index];
-    if (value === 0) return; // If the value is already 0, don't do anything
+    if (value === 0) return;
 
-    // Set the clicked square to 0
     newGrid[index] = 0;
-
-    // Get the row and column of the clicked square
     const row = Math.floor(index / 3);
     const col = index % 3;
 
-    // Add the value of the clicked square to adjacent squares
     directions.forEach(([dx, dy]) => {
       const newRow = row + dx;
       const newCol = col + dy;
       const adjIndex = newRow * 3 + newCol;
 
-      // Check if the adjacent square is within bounds
       if (newRow >= 0 && newRow < 3 && newCol >= 0 && newCol < 3) {
         newGrid[adjIndex] += value;
       }
     });
 
-    // Update the grid
     setGrid(newGrid);
   }
 
-  // When the grid is all 0s, show a message
-  if (grid.every((cell) => cell === 0)) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          backgroundColor: "#000",
-          color: "white",
-          fontSize: "24px",
-        }}
-      >
-        <div>Level Complete!</div>
-        <div>Refresh to play again.</div>
-      </div>
-    );
+  function resetGame() {
+    setGrid([...initialGrid]); // Resets the grid to the initial state
   }
 
-  // If there are no negative numbers in the grid, show a message
-  if (grid.every((cell) => cell >= 0)) {
+  // Winning or No Moves messages
+  const allZeros = grid.every((cell) => cell === 0);
+  const noMovesLeft = grid.every((cell) => cell >= 0);
+
+  if (allZeros || noMovesLeft) {
     return (
       <div
         style={{
@@ -78,8 +57,22 @@ export default function GridGame() {
           fontSize: "24px",
         }}
       >
-        <div>No possible moves!</div>
-        <div>Refresh to play again.</div>
+        <div>{allZeros ? "Level Complete!" : "No possible moves!"}</div>
+        <button
+          onClick={resetGame}
+          style={{
+            marginTop: "20px",
+            padding: "10px 20px",
+            fontSize: "20px",
+            backgroundColor: "#fff",
+            color: "#000",
+            border: "none",
+            cursor: "pointer",
+            borderRadius: "5px",
+          }}
+        >
+          Play Again
+        </button>
       </div>
     );
   }
@@ -88,9 +81,9 @@ export default function GridGame() {
     <div
       style={{
         display: "flex",
-        justifyContent: "center", // Centers horizontally
-        alignItems: "center", // Centers vertically
-        height: "100vh", // Makes the div take full height of the screen
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
         backgroundColor: "#000",
       }}
     >
