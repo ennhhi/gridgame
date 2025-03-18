@@ -7,11 +7,16 @@ const directions = [
   [-1, -1], [-1, 1], [1, -1], [1, 1]  // diagonal directions
 ];
 
-// Initial grid values
-const initialGrid = [1, 3, 2, -1, 3, -2, 1, 3, 2];
+// Define multiple levels
+const levels = [
+  [1, 3, 2, -1, 3, -2, 1, 3, 2], // Level 1
+  [2, -1, 1, 3, 0, -2, 1, -3, 2], // Level 2
+  [-3, 2, 1, 3, -2, 0, -1, 3, 1], // Level 3
+];
 
 export default function GridGame() {
-  const [grid, setGrid] = useState([...initialGrid]);
+  const [currentLevel, setCurrentLevel] = useState(0);
+  const [grid, setGrid] = useState([...levels[currentLevel]]);
 
   function handleClick(index: number) {
     const newGrid = [...grid];
@@ -35,11 +40,20 @@ export default function GridGame() {
     setGrid(newGrid);
   }
 
-  function resetGame() {
-    setGrid([...initialGrid]); // Resets the grid to the initial state
+  function nextLevel() {
+    if (currentLevel < levels.length - 1) {
+      setCurrentLevel(currentLevel + 1);
+      setGrid([...levels[currentLevel + 1]]);
+    } else {
+      resetGame(); // If it's the last level, restart from level 1
+    }
   }
 
-  // Winning or No Moves messages
+  function resetGame() {
+    setCurrentLevel(0);
+    setGrid([...levels[0]]);
+  }
+
   const allZeros = grid.every((cell) => cell === 0);
   const noMovesLeft = grid.every((cell) => cell >= 0);
 
@@ -57,9 +71,13 @@ export default function GridGame() {
           fontSize: "24px",
         }}
       >
-        <div>{allZeros ? "Level Complete!" : "No possible moves!"}</div>
+        <div>
+          {allZeros
+            ? `Level ${currentLevel + 1} Complete!`
+            : "No possible moves!"}
+        </div>
         <button
-          onClick={resetGame}
+          onClick={allZeros ? nextLevel : resetGame}
           style={{
             marginTop: "20px",
             padding: "10px 20px",
@@ -71,7 +89,7 @@ export default function GridGame() {
             borderRadius: "5px",
           }}
         >
-          Play Again
+          {allZeros ? "Next Level" : "Restart"}
         </button>
       </div>
     );
@@ -81,12 +99,15 @@ export default function GridGame() {
     <div
       style={{
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column",
         alignItems: "center",
+        justifyContent: "center",
         height: "100vh",
         backgroundColor: "#000",
+        color: "white",
       }}
     >
+      <h2>Level {currentLevel + 1}</h2>
       <div
         style={{
           display: "grid",
@@ -104,6 +125,7 @@ export default function GridGame() {
               fontSize: "24px",
               backgroundColor: "black",
               border: "2px solid white",
+              color: "white",
             }}
           >
             {cell}
