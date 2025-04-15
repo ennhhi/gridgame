@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const directions = [
   [-1, 0], [1, 0], [0, -1], [0, 1],   // cardinal directions
@@ -17,6 +17,7 @@ const levels = [
 export default function GridGame() {
   const [currentLevel, setCurrentLevel] = useState(0);
   const [grid, setGrid] = useState([...levels[currentLevel]]);
+  const [showResult, setShowResult] = useState(false); // New state for delaying result screen
 
   function handleClick(index: number) {
     const newGrid = [...grid];
@@ -49,6 +50,10 @@ export default function GridGame() {
     }
   }
 
+  function resetLevel() {
+    setGrid([...levels[currentLevel]]);
+  }
+
   function resetGame() {
     setCurrentLevel(0);
     setGrid([...levels[0]]);
@@ -59,7 +64,15 @@ export default function GridGame() {
   const onlyNegatives = grid.every((cell) => cell <= 0); // Check if all cells are negative
   const noMovesLeft = onlyPositives || onlyNegatives; // No moves left if all are positive or all are negative
 
-  if (allZeros || noMovesLeft) {
+  useEffect(() => {
+    if (allZeros || noMovesLeft) {
+      setTimeout(() => setShowResult(true), 1000); // Delay result screen by 1 second
+    } else {
+      setShowResult(false);
+    }
+  }, [allZeros, noMovesLeft]);
+
+  if ((allZeros || noMovesLeft) && showResult) {
     return (
       <div
         style={{
@@ -79,7 +92,7 @@ export default function GridGame() {
             : "No possible moves!"}
         </div>
         <button
-          onClick={allZeros ? nextLevel : resetGame}
+          onClick={allZeros ? nextLevel : resetLevel}
           style={{
             marginTop: "20px",
             padding: "10px 20px",
