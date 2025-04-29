@@ -2,4 +2,4 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Try Out the Game
 
-[Vercel Deployment](https://gridgame-blush.vercel.app/)
+[Vercel Deployment](https://gridgame-nine.vercel.app/)
